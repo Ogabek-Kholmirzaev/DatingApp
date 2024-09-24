@@ -1,11 +1,5 @@
 <app-nav></app-nav>
 
-<div class="container" style="margin-top: 70px;">    
-    <ul>
-        @for (user of users; track user.id) {
-            <li>
-                {{user.id}} - {{user.userName}}
-            </li>
-        }
-    </ul>
+<div class="container" style="margin-top: 70px;">
+    <app-home></app-home>
 </div>
