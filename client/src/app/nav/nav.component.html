@@ -2,8 +2,8 @@
     <div class="container">
         <a class="navbar-brand" routerLink="/" routerLinkActive="active">Dating App</a>
 
-        @if (this.accountService.currentUser()) {
-            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            @if (this.accountService.currentUser()) {
                 <li class="nav-item">
                     <a routerLink="/members" routerLinkActive="active" class="nav-link">Matches</a>
                 </li>
@@ -16,8 +16,8 @@
                 <li class="nav-item">
                     <a class="nav-link" (click)="logout()">Logout</a>
                 </li>
-            </ul>
-        }
+            }
+        </ul>
 
         @if (this.accountService.currentUser()) {
             <div dropdown class="dropdown">
