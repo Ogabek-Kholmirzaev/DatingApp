@@ -1,12 +1,7 @@
-using System.Text;
-using API.Data;
 using API.Extentions;
 using API.Interfaces;
+using API.Middleware;
 using API.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +16,8 @@ builder.Services.AddCors();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseCors(options =>
     options.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200", "http://localhost:4200"));
