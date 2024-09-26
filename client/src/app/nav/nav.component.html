@@ -13,10 +13,10 @@
                 <li class="nav-item">
                     <a routerLink="/messages" routerLinkActive="active" class="nav-link">Messages</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" (click)="logout()">Logout</a>
-                </li>
             }
+            <li class="nav-item">
+              <a routerLink="/errors" routerLinkActive="active" class="nav-link">Errors</a>
+          </li>
         </ul>
 
         @if (this.accountService.currentUser()) {
