@@ -1,5 +1,6 @@
 using API.Data;
 using API.Extentions;
+using API.Helpers;
 using API.Interfaces;
 using API.Middleware;
 using API.Services;
@@ -14,7 +15,9 @@ builder.Services.AddSwagger();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIdentity(builder.Configuration);
 builder.Services.AddCors();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
