@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, HostListener, inject, ViewChild } from '@angular/core';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { Member } from '../../_models/member';
 import { MembersService } from '../../_services/members.service';
@@ -15,6 +15,11 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class MemberEditComponent {
   @ViewChild('editForm') editForm?: NgForm;
+  @HostListener('window:beforeunload', ['$event']) notify($event:any) {
+    if (this.editForm?.dirty) {
+      $event.returnValue = true;
+    }
+  }
   member?: Member;
   private memberService = inject(MembersService);
   private accountService = inject(AccountService);
