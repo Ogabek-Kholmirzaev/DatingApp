@@ -4,6 +4,7 @@ using API.Extentions;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -82,7 +83,10 @@ public class UsersController(
 
         if (await userRepository.SaveAllAsync())
         {
-            return mapper.Map<PhotoDto>(photo);
+            return CreatedAtAction(
+                nameof(GetUser),
+                new { username = User.GetUsername() },
+                mapper.Map<PhotoDto>(photo));
         }
 
         return BadRequest("Problem adding photo");
