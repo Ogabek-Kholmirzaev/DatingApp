@@ -50,4 +50,8 @@ export class MemberEditComponent {
       }
     });
   }
+
+  onMemeberChange(event: Member) {
+    this.member = event;
+  }
 }
