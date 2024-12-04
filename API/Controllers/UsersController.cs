@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 
 namespace API.Controllers;
 
@@ -90,5 +91,39 @@ public class UsersController(
         }
 
         return BadRequest("Problem adding photo");
+    }
+
+    [HttpPut("set-main-photo/{photoId:int}")]
+    public async Task<ActionResult> SetMainPhoto(int photoId)
+    {
+        var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
+
+        if (user == null)
+        {
+            return BadRequest("Could not find user");
+        }
+
+        var photo = user.Photos.FirstOrDefault(p => p.Id == photoId);
+
+        if (photo == null || photo.IsMain)
+        {
+            return BadRequest("Cannot use this as main photo");
+        }
+
+        var currentMain = user.Photos.FirstOrDefault(p => p.IsMain);
+        
+        if (currentMain != null)
+        {
+            currentMain.IsMain = false;
+        }
+
+        photo.IsMain = true;
+
+        if (await userRepository.SaveAllAsync())
+        {
+            return NoContent();
+        }
+
+        return BadRequest("Problem setting main photo");
     }
 }
