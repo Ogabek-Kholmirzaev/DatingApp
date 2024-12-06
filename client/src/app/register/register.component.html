@@ -2,22 +2,60 @@
   <h2 class="text-center text-primary">Sign up</h2>
   <hr>
   <div class="mb-3 form-floating">
-    <input type="text" class="form-control" formControlName="username" placeholder="Username">
+    <input
+      [class.is-invalid]="this.registerForm.get('username')?.errors && this.registerForm.get('username')?.touched"
+      type="text"
+      class="form-control"
+      formControlName="username"
+      placeholder="Username">
     <label for="username">Username</label>
+    <div class="invalid-feedback text-start">Please enter a username</div>
   </div>
   <div class="mb-3 form-floating">
-    <input type="password" class="form-control" formControlName="password" placeholder="Password">
+    <input
+      [class.is-invalid]="this.registerForm.get('password')?.errors && this.registerForm.get('password')?.touched"
+      type="password"
+      class="form-control"
+      formControlName="password"
+      placeholder="Password">
     <label for="password">Password</label>
+    <div
+      *ngIf="this.registerForm.get('password')?.hasError('required')"
+      class="invalid-feedback text-start">
+      Please enter a password
+    </div>
+    <div
+      *ngIf="this.registerForm.get('password')?.hasError('minlength')"
+      class="invalid-feedback text-start">
+      Password must be at least 4 characters
+    </div>
+    <div
+      *ngIf="this.registerForm.get('password')?.hasError('maxlength')"
+      class="invalid-feedback text-start">
+      Password must be at most 8 characters
+    </div>
   </div>
   <div class="mb-3 form-floating">
-    <input type="password" class="form-control" formControlName="confirmPassword" placeholder="Confirm Password">
+    <input
+      [class.is-invalid]="this.registerForm.get('confirmPassword')?.errors && this.registerForm.get('confirmPassword')?.touched"
+      type="password"
+      class="form-control"
+      formControlName="confirmPassword"
+      placeholder="Confirm Password">
     <label for="password">Confirm Password</label>
+    <div
+      *ngIf="this.registerForm.get('confirmPassword')?.hasError('required')"
+      class="invalid-feedback text-start">
+      Please enter a confirm password
+    </div>
+    <div
+      *ngIf="this.registerForm.get('confirmPassword')?.hasError('isMatching')"
+      class="invalid-feedback text-start">
+      Conform password must match password
+    </div>
   </div>
   <div class="form-group text-center">
     <button class="btn btn-success me-2" type="submit">Register</button>
     <button class="btn btn-default me-2" (click)="cancel()" type="button">Cancel</button>
   </div>
 </form>
-
-<p>Form value: {{this.registerForm.value | json}}</p>
-<p>Form status: {{this.registerForm.status | json}}</p>
