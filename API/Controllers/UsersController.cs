@@ -74,6 +74,7 @@ public class UsersController(
 
         var photo = new Photo
         {
+            IsMain = user.Photos.Count == 0,
             Url = result.SecureUrl.AbsoluteUri,
             PublicId = result.PublicId
         };
