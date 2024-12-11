@@ -40,13 +40,34 @@ public class UserRepository(DataContext dataContext, IMapper mapper) : IUserRepo
         return await dataContext.SaveChangesAsync() > 0;
     }
 
-    public async Task<PagedList<MemberDto>> GetMembersAsync(PaginationParams @params)
+    public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams @params)
     {
-        var query = dataContext.Users
-            .ProjectTo<MemberDto>(mapper.ConfigurationProvider);
+        var query = dataContext.Users.AsQueryable();
 
-        var pagedUsers = await PagedList<MemberDto>
-            .CreateAsync(query, @params.PageNumber, @params.PageSize);
+        if (!string.IsNullOrWhiteSpace(@params.CurrentUsername))
+        {
+            query = query.Where(x => x.UserName != @params.CurrentUsername);
+        }
+
+        if (!string.IsNullOrWhiteSpace(@params.Gender))
+        {
+            query = query.Where(x => x.Gender == @params.Gender);
+        }
+
+        if (@params.MinAge != null)
+        {
+            query = query.Where(x => x.DateOfBirth <= DateOnly.FromDateTime(DateTime.Today.AddYears(-@params.MinAge.Value)));
+        }
+
+        if (@params.MaxAge != null)
+        {
+            query = query.Where(x => x.DateOfBirth >= DateOnly.FromDateTime(DateTime.Today.AddYears(-@params.MaxAge.Value)));
+        }
+
+        var pagedUsers = await PagedList<MemberDto>.CreateAsync(
+            query.ProjectTo<MemberDto>(mapper.ConfigurationProvider),
+            @params.PageNumber,
+            @params.PageSize);
         
         return pagedUsers;
     }

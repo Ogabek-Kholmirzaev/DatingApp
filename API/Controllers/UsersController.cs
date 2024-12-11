@@ -16,8 +16,10 @@ public class UsersController(
     IPhotoService photoService) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] PaginationParams @params)
+    public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams @params)
     {
+        @params.CurrentUsername = User.GetUsername();
+
         var users = await userRepository.GetMembersAsync(@params);
 
         Response.AddPaginationHeader(users);
