@@ -4,4 +4,20 @@
         <app-member-card [member]="member"></app-member-card>
       </div>
     }
+
+    @if (this.memberService.paginatedResult()?.pagination) {
+      <div class="d-flex justify-content-center">
+        <pagination
+          [boundaryLinks]="true"
+          [totalItems]="this.memberService.paginatedResult()?.pagination!.totalItems"
+          [itemsPerPage]="this.memberService.paginatedResult()?.pagination!.itemsPerPage"
+          (pageChanged)="pageChanged($event)"
+          [maxSize]="20"
+          previousText="&lsaquo;"
+          nextText="&rsaquo;"
+          firstText="&laquo;"
+          lastText="&raquo;">
+        </pagination>
+      </div>
+    }
 </div>
