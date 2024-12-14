@@ -20,9 +20,16 @@
     </ul>
 
     @if (this.accountService.currentUser()) {
-      <img class="me-2" src="{{accountService.currentUser()?.photoUrl || './assets/user.png'}}" alt="user main image">
       <div dropdown class="dropdown">
-        <a dropdownToggle class="dropdown-toggle text-light text-decoration-none">Welcome {{this.accountService.currentUser()?.username | titlecase}}</a>
+        <img
+            class="me-2"
+            src="{{accountService.currentUser()?.photoUrl || './assets/user.png'}}"
+            alt="user main image">
+        <a
+          dropdownToggle
+          class="dropdown-toggle text-light text-decoration-none">
+          Welcome {{this.accountService.currentUser()?.knownAs}}
+        </a>
         <div *dropdownMenu class="dropdown-menu">
           <a routerLink="/member/edit" class="dropdown-item">Edit profile</a>
           <div class="dropdown-divider"></div>
