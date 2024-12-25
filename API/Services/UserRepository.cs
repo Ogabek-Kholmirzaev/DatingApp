@@ -61,7 +61,7 @@ public class UserRepository(DataContext dataContext, IMapper mapper) : IUserRepo
 
         if (@params.MaxAge != null)
         {
-            query = query.Where(x => x.DateOfBirth >= DateOnly.FromDateTime(DateTime.Today.AddYears(-@params.MaxAge.Value)));
+            query = query.Where(x => x.DateOfBirth > DateOnly.FromDateTime(DateTime.Today.AddYears(-@params.MaxAge.Value - 1)));
         }
 
         var pagedUsers = await PagedList<MemberDto>.CreateAsync(
