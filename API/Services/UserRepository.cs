@@ -64,6 +64,12 @@ public class UserRepository(DataContext dataContext, IMapper mapper) : IUserRepo
             query = query.Where(x => x.DateOfBirth > DateOnly.FromDateTime(DateTime.Today.AddYears(-@params.MaxAge.Value - 1)));
         }
 
+        query = @params.OrderBy switch
+        {
+            "created" => query.OrderByDescending(x => x.Created),
+            _ => query.OrderByDescending(x => x.LastActive)
+        };
+
         var pagedUsers = await PagedList<MemberDto>.CreateAsync(
             query.ProjectTo<MemberDto>(mapper.ConfigurationProvider),
             @params.PageNumber,
