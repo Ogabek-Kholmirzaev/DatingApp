@@ -76,6 +76,7 @@
         [itemsPerPage]="this.memberService.paginatedResult()?.pagination!.itemsPerPage"
         (pageChanged)="pageChanged($event)"
         [maxSize]="20"
+        [(ngModel)]="this.memberService.paginatedResult()?.pagination!.currentPage"
         previousText="&lsaquo;"
         nextText="&rsaquo;"
         firstText="&laquo;"
