@@ -22,6 +22,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<LogUserActivity>();
 builder.Services.AddScoped<ILikesRepository, LikesRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
 var app = builder.Build();
 
