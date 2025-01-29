@@ -63,4 +63,13 @@ public class MessagesController(
 
         return BadRequest("Failed to save message");
     }
+
+    [HttpGet("thread/{username}")]
+    public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessageThread(string username)
+    {
+        var currentUsername = User.GetUsername();
+        var messages = await messageRepository.GetMessageThreadAsync(currentUsername, username);
+
+        return Ok(messages);
+    }
 }
