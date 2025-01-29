@@ -2,6 +2,6 @@
 
 public class MessageParams : PaginationParams
 {
-    public required string Username { get; set; }
+    public string Username { get; set; } = default!;
     public string Container { get; set; } = "Unread";
 }

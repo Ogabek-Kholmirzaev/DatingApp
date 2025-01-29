@@ -1,6 +1,7 @@
 ﻿using API.DTOs;
 using API.Entities;
 using API.Extentions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,19 @@ public class MessagesController(
     IUserRepository userRepository,
     IMapper mapper) : BaseApiController
 {
+
+    [HttpGet]
+    public async Task<PagedList<MessageDto>> GetMessagesForUser([FromQuery] MessageParams @params)
+    {
+        @params.Username = User.GetUsername();
+
+        var messages = await messageRepository.GetMessagesForUserAsync(@params);
+
+        Response.AddPaginationHeader(messages);
+
+        return messages;
+    }
+
     [HttpPost]
     public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)
     {
