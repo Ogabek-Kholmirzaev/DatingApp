@@ -10,6 +10,6 @@ public class MessageDto
     public required string RecipientUsername { get; set; }
     public required string RecipientPhotoUrl { get; set; }
     public required string Content { get; set; }
-    public DateTime MessageSent { get; set; } = DateTime.UtcNow;
+    public DateTime MessageSent { get; set; }
     public DateTime? DateRead { get; set; }
 }
