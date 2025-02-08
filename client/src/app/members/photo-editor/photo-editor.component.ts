@@ -5,7 +5,7 @@ import { FileUploader, FileUploadModule } from 'ng2-file-upload';
 import { AccountService } from '../../_services/account.service';
 import { environment } from '../../../environments/environment';
 import { MembersService } from '../../_services/members.service';
-import { Photo } from '../../_models/Photo';
+import { Photo } from '../../_models/photo';
 
 @Component({
   selector: 'app-photo-editor',
