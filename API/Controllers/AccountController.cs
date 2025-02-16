@@ -30,7 +30,7 @@ public class AccountController(
         user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
         user.PasswordSalt = hmac.Key;
 
-        context.Users.Add(user);
+        await context.Users.AddAsync(user);
         await context.SaveChangesAsync();
 
         return new UserDto

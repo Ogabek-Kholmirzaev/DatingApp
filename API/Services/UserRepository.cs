@@ -43,7 +43,6 @@ public class UserRepository(DataContext dataContext, IMapper mapper) : IUserRepo
     public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams @params)
     {
         var query = dataContext.Users.AsQueryable();
-
         if (!string.IsNullOrWhiteSpace(@params.CurrentUsername))
         {
             query = query.Where(x => x.UserName != @params.CurrentUsername);

@@ -11,9 +11,9 @@ namespace API.Services;
 
 public class MessageRepository(DataContext context, IMapper mapper) : IMessageRepository
 {
-    public void AddMessage(Message message)
+    public async Task AddMessageAsync(Message message)
     {
-        context.Messages.Add(message);
+        await context.Messages.AddAsync(message);
     }
 
     public void DeleteMessage(Message message)
@@ -38,7 +38,6 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
         };
 
         var messages = query.ProjectTo<MessageDto>(mapper.ConfigurationProvider);
-
         return await PagedList<MessageDto>.CreateAsync(messages, @params.PageNumber, @params.PageSize);
     }
 

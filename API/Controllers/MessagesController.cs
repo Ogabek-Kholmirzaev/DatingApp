@@ -31,7 +31,6 @@ public class MessagesController(
     public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)
     {
         var username = User.GetUsername();
-
         if (username.Equals(createMessageDto.RecipientUsername, StringComparison.CurrentCultureIgnoreCase))
         {
             return BadRequest("You cannot message yourself");
@@ -40,7 +39,7 @@ public class MessagesController(
         var sender = await userRepository.GetUserByUsernameAsync(username);
         var recipient = await userRepository.GetUserByUsernameAsync(createMessageDto.RecipientUsername);
 
-        if (sender == null  || recipient == null)
+        if (sender == null || recipient == null)
         {
             return BadRequest("Cannot send message at this time");
         }
@@ -54,14 +53,11 @@ public class MessagesController(
             Content = createMessageDto.Content
         };
 
-        messageRepository.AddMessage(message);
+        await messageRepository.AddMessageAsync(message);
 
-        if (await messageRepository.SaveAllAsync())
-        {
-            return Ok(mapper.Map<MessageDto>(message));
-        }
-
-        return BadRequest("Failed to save message");
+        return await messageRepository.SaveAllAsync()
+            ? Ok(mapper.Map<MessageDto>(message)) 
+            : BadRequest("Failed to save a message");
     }
 
     [HttpGet("thread/{username}")]

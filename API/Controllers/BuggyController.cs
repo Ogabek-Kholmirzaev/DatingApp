@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using API.Data;
 using API.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -28,10 +29,9 @@ public class BuggyController(DataContext context) : BaseApiController
     }
 
     [HttpGet("server-error")]
-    public ActionResult<AppUser> GetServerError()
+    public async Task<ActionResult<AppUser>> GetServerError()
     {
-        var thing = context.Users.Find(-1) ?? throw new Exception("A bad thing has happened");
-    
+        var thing = await context.Users.FindAsync(-1) ?? throw new Exception("A bad thing has happened");
         return thing;
     }
 

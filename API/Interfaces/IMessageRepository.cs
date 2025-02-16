@@ -6,7 +6,7 @@ namespace API.Interfaces;
 
 public interface IMessageRepository
 {
-    void AddMessage(Message message);
+    Task AddMessageAsync(Message message);
     void DeleteMessage(Message message);
     Task<Message?> GetMessageAsync(int id);
     Task<PagedList<MessageDto>> GetMessagesForUserAsync(MessageParams @params);

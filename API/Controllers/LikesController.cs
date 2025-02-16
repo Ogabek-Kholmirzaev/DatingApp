@@ -25,14 +25,12 @@ public class LikesController(ILikesRepository likesRepository) : BaseApiControll
     public async Task<ActionResult> ToggleLike(int targetUserId)
     {
         var sourceUserId = User.GetUserId();
-
         if (sourceUserId == targetUserId)
         {
             return BadRequest("You cannot like yourself");
         }
 
         var existingLike = await likesRepository.GetUserLike(sourceUserId, targetUserId);
-
         if (existingLike == null)
         {
             var userLike = new UserLike
@@ -41,19 +39,14 @@ public class LikesController(ILikesRepository likesRepository) : BaseApiControll
                 TargetUserId = targetUserId
             };
 
-            likesRepository.AddLike(userLike);
+            await likesRepository.AddLikeAsync(userLike);
         }
         else
         {
             likesRepository.DeleteLike(existingLike);
         }
-        
-        if (await likesRepository.SaveChangesAsync())
-        {
-            return Ok();
-        }
 
-        return BadRequest("Failed to update like");
+        return await likesRepository.SaveChangesAsync() ? Ok() : BadRequest("Failed to update like");
     }
 
     [HttpGet("list")]
