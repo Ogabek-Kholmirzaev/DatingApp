@@ -18,7 +18,7 @@
           </div>
           <div>
             <strong>Member since:</strong>
-            <p>{{member.created | date: 'dd MMM yyyy'}}</p>
+            <p>{{member.created | date: 'dd MMM yyyyng'}}</p>
           </div>
         </div>
         <div class="card-footer">
@@ -48,7 +48,7 @@
           }
         </tab>
         <tab heading="Messages">
-          <p>Messages will go here</p>
+          <app-member-messages [username]="member.username"></app-member-messages>
         </tab>
       </tabset>
     </div>
