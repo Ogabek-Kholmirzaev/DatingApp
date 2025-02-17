@@ -1,3 +1,45 @@
-@for (message of this.messages; track message.id) {
-  <p>{{message.content}}</p>
-}
+<div class="card">
+  <div class="card-body">
+    @if (this.messages.length === 0) {
+      <p>No messages yet</p>
+    } @else {
+      <ul class="chat">
+        @for (message of this.messages; track message.id) {
+          <li>
+            <span class="chat-img float-end">
+              <img
+                class="rounded-circle"
+                src="{{message.senderPhotoUrl || './assets/user.png'}}"
+                alt="image of message sender">
+            </span>
+            <div class="chat-body">
+              <div class="header">
+                <small class="text-muted">
+                  <span class="fa fa-clock-o">{{message.messageSent | timeago}}</span>
+                  @if (!message.dateRead && message.senderUsername !== this.username()) {
+                    <span class="text-danger">(unread)</span>
+                  }
+                  @if (message.dateRead && message.senderUsername !== this.username()) {
+                    <span class="text-success">(read {{message.dateRead | timeago}})</span>
+                  }
+                </small>
+              </div>
+              <p>{{message.content}}</p>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div class="card-footer">
+    <form>
+      <div class="input-group">
+        <input type="text" class="form-control input-sm" placeholder="Send a private message">
+        <div class="imput-group-append">
+          <button class="btn btn-primary" type="submit">Send</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
