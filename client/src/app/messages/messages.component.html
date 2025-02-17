@@ -40,7 +40,7 @@
     </thead>
     <tbody class="align-middle">
       @for (message of this.messageService.paginatedResult()?.items; track message.id) {
-        <tr routerLink="{{this.getRoute(message)}}">
+        <tr routerLink="{{this.getRoute(message)}}" [queryParams]="{tab: 'Messages'}">
           <td>{{message.content}}</td>
           <td>
             <div>
