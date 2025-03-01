@@ -1,6 +1,8 @@
 using System.Text;
 using API.Data;
+using API.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -43,9 +45,12 @@ public static class ServicesExtensions
         return services;
     }
 
-    public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddDatabase(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("ConnectionSeting not found");
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new ArgumentNullException("ConnectionSeting not found");
 
         services.AddDbContext<DataContext>(options =>
         {
@@ -55,12 +60,23 @@ public static class ServicesExtensions
         return services;
     }
 
-    public static IServiceCollection AddIdentity(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddIdentity(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
+        services.AddIdentityCore<AppUser>(options =>
+        {
+            options.Password.RequireNonAlphanumeric = false;
+        })
+            .AddRoles<AppRole>()
+            .AddRoleManager<RoleManager<AppRole>>()
+            .AddEntityFrameworkStores<DataContext>();
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                var tokenKey = configuration["TokenKey"] ?? throw new ArgumentNullException("TokenKey not found");
+                var tokenKey = configuration["TokenKey"]
+                    ?? throw new ArgumentNullException("TokenKey not found");
                 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
