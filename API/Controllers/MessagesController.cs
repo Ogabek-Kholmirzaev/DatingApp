@@ -4,11 +4,12 @@ using API.Extentions;
 using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-
+[Authorize]
 public class MessagesController(
     IMessageRepository messageRepository,
     IUserRepository userRepository,
@@ -56,7 +57,7 @@ public class MessagesController(
         await messageRepository.AddMessageAsync(message);
 
         return await messageRepository.SaveAllAsync()
-            ? Ok(mapper.Map<MessageDto>(message)) 
+            ? Ok(mapper.Map<MessageDto>(message))
             : BadRequest("Failed to save a message");
     }
 
@@ -67,5 +68,39 @@ public class MessagesController(
         var messages = await messageRepository.GetMessageThreadAsync(currentUsername, username);
 
         return Ok(messages);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteMessage(int id)
+    {
+        var username = User.GetUsername();
+        var message = await messageRepository.GetMessageAsync(id);
+
+        if (message == null)
+        {
+            return BadRequest("Cannot delete this message");
+        }
+
+        if (message.SenderUsername != username || message.RecipientUsername != username)
+        {
+            return Forbid();
+        }
+
+        if (message.SenderUsername == username)
+        {
+            message.SenderDeleted = true;
+        }
+
+        if (message.RecipientUsername == username)
+        {
+            message.RecipientDeleted = true;
+        }
+
+        if (message is { SenderDeleted: true, RecipientDeleted: true })
+        {
+            messageRepository.DeleteMessage(message);
+        }
+
+        return await messageRepository.SaveAllAsync() ? Ok() : BadRequest("Problem deleting the message");
     }
 }
