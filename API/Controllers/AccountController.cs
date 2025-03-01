@@ -35,7 +35,7 @@ public class AccountController(
 
         return new UserDto
         {
-            Username = user.UserName,
+            Username = user.UserName!,
             KnowsAs = user.KnownAs,
             Token = tokenService.CreateToken(user),
             Gender = user.Gender
@@ -47,7 +47,7 @@ public class AccountController(
     {
         var user = await context.Users
             .Include(x => x.Photos)
-            .FirstOrDefaultAsync(x => x.UserName.ToLower() == loginDto.Username.ToLower());
+            .FirstOrDefaultAsync(x => x.NormalizedUserName == loginDto.Username.ToUpper());
 
         if (user == null)
         {
@@ -67,7 +67,7 @@ public class AccountController(
 
         return new UserDto
         {
-            Username = user.UserName,
+            Username = user.UserName!,
             KnowsAs = user.KnownAs,
             Token = tokenService.CreateToken(user),
             Gender = user.Gender,
@@ -77,6 +77,6 @@ public class AccountController(
 
     private async Task<bool> UserExists(string username)
     {
-        return await context.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
+        return await context.Users.AnyAsync(x => x.NormalizedEmail == username.ToUpper());
     }
 }

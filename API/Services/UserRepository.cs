@@ -27,7 +27,7 @@ public class UserRepository(DataContext dataContext, IMapper mapper) : IUserRepo
     {
         return await dataContext.Users
             .Include(x => x.Photos)
-            .SingleOrDefaultAsync(x => x.UserName.ToLower() == username.ToLower());
+            .SingleOrDefaultAsync(x => x.NormalizedUserName == username.ToUpper());
     }
 
     public void Update(AppUser user)
@@ -80,7 +80,7 @@ public class UserRepository(DataContext dataContext, IMapper mapper) : IUserRepo
     public async Task<MemberDto?> GetMemberAsync(string username)
     {
         return await dataContext.Users
-            .Where(x => x.UserName.ToLower() == username.ToLower())
+            .Where(x => x.NormalizedUserName == username.ToUpper())
             .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
             .SingleOrDefaultAsync();
     }
