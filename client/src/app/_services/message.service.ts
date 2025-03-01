@@ -32,5 +32,9 @@ export class MessageService {
     return this.http.post<Message>(this.baseUrl + 'messages', { recipientUsername: username, content });
   }
 
+  deleteMessage(id: number) {
+    return this.http.delete(this.baseUrl + 'messages/' + id);
+  }
+
   constructor() { }
 }
