@@ -41,6 +41,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-await app.SeedUsers();
+await app.DbMigrateAndSeedUsersAsync();
 
 app.Run();

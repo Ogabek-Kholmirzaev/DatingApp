@@ -2,16 +2,18 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using API.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
 
 public static class Seed
 {
-    public static async Task SeedUsers(this WebApplication app)
+    public static async Task DbMigrateAndSeedUsersAsync(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
         var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
         await dataContext.Database.MigrateAsync();
 
@@ -25,14 +27,8 @@ public static class Seed
             {
                 foreach (var user in users)
                 {
-                    using var hmac = new HMACSHA512();
-
-                    // user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Pa$$w0rd"));
-                    // user.PasswordSalt = hmac.Key;
+                    await userManager.CreateAsync(user, "Pa$$w0rd");
                 }
-
-                await dataContext.Users.AddRangeAsync(users);
-                await dataContext.SaveChangesAsync();
             }
         }
     }
