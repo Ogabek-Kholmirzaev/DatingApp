@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using API.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +12,7 @@ public static class Seed
         using var scope = app.Services.CreateScope();
         var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
 
         await dataContext.Database.MigrateAsync();
 
@@ -25,10 +24,35 @@ public static class Seed
 
             if (users != null)
             {
+                var roles = new List<AppRole>
+                {
+                    new() { Name =  "Member" },
+                    new() { Name =  "Admin" },
+                    new() { Name =  "Moderator" }
+                };
+
+                foreach (var role in roles)
+                {
+                    await roleManager.CreateAsync(role);
+                }
+
                 foreach (var user in users)
                 {
                     await userManager.CreateAsync(user, "Pa$$w0rd");
+                    await userManager.AddToRoleAsync(user, "Member");
                 }
+
+                var admin = new AppUser
+                {
+                    UserName = "admin",
+                    KnownAs = "Admin",
+                    Gender = "",
+                    City = "",
+                    Country = ""
+                };
+
+                await userManager.CreateAsync(admin, "Pa$$w0rd");
+                await userManager.AddToRolesAsync(admin, ["Admin", "Moderator"]);
             }
         }
     }
