@@ -3,13 +3,17 @@ using System.Security.Claims;
 using System.Text;
 using API.Entities;
 using API.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services;
 
-public class TokenService(IConfiguration configuration) : ITokenService
+public class TokenService(
+    IConfiguration configuration,
+    UserManager<AppUser> userManager)
+    : ITokenService
 {
-    public string CreateToken(AppUser user)
+    public async Task<string> CreateTokenAsync(AppUser user)
     {
         var tokenKey = configuration["TokenKey"] ?? throw new ArgumentException("Cannot access TokenKey from appsettings");
         if (tokenKey.Length < 64)
@@ -24,6 +28,10 @@ public class TokenService(IConfiguration configuration) : ITokenService
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.UserName!)
         };
+
+        var roles = await userManager.GetRolesAsync(user);
+
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
