@@ -1,4 +1,4 @@
-import { Directive, inject, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, inject, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
 import { AccountService } from '../_services/account.service';
 
 @Directive({
@@ -20,5 +20,4 @@ export class HasRoleDirective implements OnInit {
   }
 
   constructor() { }
-
 }
