@@ -49,7 +49,7 @@ export class MessagesComponent implements OnInit {
       return `/members/${message.recipientUsername}`;
     }
 
-    return `members/${message.senderUsername}`;
+    return `/members/${message.senderUsername}`;
   }
 
   pageChanged(event: any) {
