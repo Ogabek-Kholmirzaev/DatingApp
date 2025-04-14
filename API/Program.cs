@@ -1,6 +1,7 @@
 using API.Data;
 using API.Extentions;
 using API.Helpers;
+using API.Hubs;
 using API.Interfaces;
 using API.Middleware;
 using API.Services;
@@ -23,13 +24,14 @@ builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<LogUserActivity>();
 builder.Services.AddScoped<ILikesRepository, LikesRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseCors(options =>
-    options.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200", "http://localhost:4200"));
+    options.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("https://localhost:4200", "http://localhost:4200"));
 
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -40,6 +42,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<PresenceHub>("hubs/presence");
 
 await app.DbMigrateAndSeedUsersAsync();
 
