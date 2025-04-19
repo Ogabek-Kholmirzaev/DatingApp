@@ -3,6 +3,11 @@
     <div class="card">
       <img src="{{member.photoUrl || './assets/user.png'}}" alt="{{member.knownAs}}" class="card-img img-thumbnail">
       <div class="card-body">
+        @if (this.presenceService.onlineUsers().includes(member.username)) {
+          <div class="mb-2">
+            <i class="fa fa-user-circle text-success"></i> Online now
+          </div>
+        }
         <div>
           <strong>Location:</strong>
           <p>{{member.city}}, {{member.country}}</p>
