@@ -25,6 +25,7 @@ builder.Services.AddScoped<LogUserActivity>();
 builder.Services.AddScoped<ILikesRepository, LikesRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<PresenceTracker>();
 
 var app = builder.Build();
 
