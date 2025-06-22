@@ -57,7 +57,7 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
         var unreadMessages = messages
             .Where(x => x.Recipient.UserName == currentUsername && x.DateRead == null)
             .ToList();
-        
+
         if (unreadMessages.Count > 0)
         {
             unreadMessages.ForEach(x => x.DateRead = DateTime.UtcNow);
@@ -70,5 +70,27 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
     public async Task<bool> SaveAllAsync()
     {
         return await context.SaveChangesAsync() > 0;
+    }
+
+    public void AddGroup(Group group)
+    {
+        context.Groups.Add(group);
+    }
+
+    public void RemoveConnection(Connection connection)
+    {
+        context.Connections.Remove(connection);
+    }
+
+    public async Task<Connection?> GetConnectionAsync(string connectionId)
+    {
+        return await context.Connections.FindAsync(connectionId);
+    }
+
+    public async Task<Group?> GetMessageGroupAsync(string groupName)
+    {
+        return await context.Groups
+            .Include(x => x.Connections)
+            .FirstOrDefaultAsync(x => x.Name == groupName);
     }
 }
