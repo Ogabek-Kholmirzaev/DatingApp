@@ -25,6 +25,7 @@ public class MessageHub(
 
         var groupName = GetGroupName(Context.User.GetUsername(), recipientUsername!);
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        await AddToGroupAsync(groupName);
 
         var messages = await messageRepository.GetMessageThreadAsync(Context.User.GetUsername(), recipientUsername!);
         await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
@@ -32,6 +33,7 @@ public class MessageHub(
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
+        await RemoveFromMessageGroupAsync();
         await base.OnDisconnectedAsync(exception);
     }
 
@@ -60,16 +62,49 @@ public class MessageHub(
             Content = createMessageDto.Content
         };
 
+        var groupName = GetGroupName(sender.UserName!, recipient.UserName!);
+        var group = await messageRepository.GetMessageGroupAsync(groupName);
+        if (group != null && group.Connections.Any(x => x.Username == recipient.UserName))
+        {
+            message.DateRead = DateTime.UtcNow;
+        }
+
         await messageRepository.AddMessageAsync(message);
 
         if (await messageRepository.SaveAllAsync())
         {
-            var groupName = GetGroupName(sender.UserName!, recipient.UserName!);
             await Clients.Group(groupName).SendAsync("NewMessage", mapper.Map<MessageDto>(message));
         }
         else
         {
             throw new HubException("Failed to send message");
+        }
+    }
+
+    private async Task<bool> AddToGroupAsync(string groupName)
+    {
+        var username = Context.User?.GetUsername() ?? throw new Exception("Could not get user");
+        var group = await messageRepository.GetMessageGroupAsync(groupName);
+        var connection = new Connection { ConnectionId = Context.ConnectionId, Username = username };
+
+        if (group == null)
+        {
+            group = new Group { Name = groupName };
+            await messageRepository.AddGroupAsync(group);
+        }
+
+        group.Connections.Add(connection);
+
+        return await messageRepository.SaveAllAsync();
+    }
+
+    private async Task RemoveFromMessageGroupAsync()
+    {
+        var connection = await messageRepository.GetConnectionAsync(Context.ConnectionId);
+        if (connection != null)
+        {
+            messageRepository.RemoveConnection(connection);
+            await messageRepository.SaveAllAsync();
         }
     }
 

@@ -16,6 +16,9 @@ public static class Seed
 
         await dataContext.Database.MigrateAsync();
 
+        await dataContext.Database.ExecuteSqlRawAsync("DELETE FROM [Connections]");
+        await dataContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Connections\"");
+
         if (!await dataContext.Users.AnyAsync())
         {
             var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
