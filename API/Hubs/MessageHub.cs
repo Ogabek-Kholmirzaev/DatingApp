@@ -10,7 +10,8 @@ namespace API.Hubs;
 public class MessageHub(
     IMessageRepository messageRepository,
     IUserRepository userRepository,
-    IMapper mapper)
+    IMapper mapper,
+    IHubContext<PresenceHub> presenceHub)
     : Hub
 {
     public override async Task OnConnectedAsync()
@@ -67,6 +68,15 @@ public class MessageHub(
         if (group != null && group.Connections.Any(x => x.Username == recipient.UserName))
         {
             message.DateRead = DateTime.UtcNow;
+        }
+        else
+        {
+            var connections = await PresenceTracker.GetConnectionsForUserAsync(recipient.UserName!);
+            if (connections?.Count > 0)
+            {
+                await presenceHub.Clients.Clients(connections)
+                    .SendAsync("NewMessageReceived", new { username, knownAs = sender.KnownAs });
+            }
         }
 
         await messageRepository.AddMessageAsync(message);
