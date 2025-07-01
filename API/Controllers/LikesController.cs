@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class LikesController(ILikesRepository likesRepository) : BaseApiController
+public class LikesController(IUnitOfWork unitOfWork) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<PagedList<MemberDto>>> GetUserLikes([FromQuery] LikesParams @params)
     {
         @params.UserId = User.GetUserId();
 
-        var users = await likesRepository.GetUserLikes(@params);
+        var users = await unitOfWork.LikesRepository.GetUserLikes(@params);
 
         Response.AddPaginationHeader(users);
 
@@ -30,7 +30,7 @@ public class LikesController(ILikesRepository likesRepository) : BaseApiControll
             return BadRequest("You cannot like yourself");
         }
 
-        var existingLike = await likesRepository.GetUserLike(sourceUserId, targetUserId);
+        var existingLike = await unitOfWork.LikesRepository.GetUserLike(sourceUserId, targetUserId);
         if (existingLike == null)
         {
             var userLike = new UserLike
@@ -39,19 +39,19 @@ public class LikesController(ILikesRepository likesRepository) : BaseApiControll
                 TargetUserId = targetUserId
             };
 
-            await likesRepository.AddLikeAsync(userLike);
+            await unitOfWork.LikesRepository.AddLikeAsync(userLike);
         }
         else
         {
-            likesRepository.DeleteLike(existingLike);
+            unitOfWork.LikesRepository.DeleteLike(existingLike);
         }
 
-        return await likesRepository.SaveChangesAsync() ? Ok() : BadRequest("Failed to update like");
+        return await unitOfWork.CompleteAsync() ? Ok() : BadRequest("Failed to update like");
     }
 
     [HttpGet("list")]
     public async Task<ActionResult<IEnumerable<int>>> GetCurrentUserLikeIds()
     {
-        return Ok(await likesRepository.GetCurrentUserLikeIds(User.GetUserId()));
+        return Ok(await unitOfWork.LikesRepository.GetCurrentUserLikeIds(User.GetUserId()));
     }
 }

@@ -15,13 +15,13 @@ public class LogUserActivity : IAsyncActionFilter
         if (context.HttpContext.User.Identity?.IsAuthenticated == true)
         {
             var userId = resultContext.HttpContext.User.GetUserId();
-            var userRepository = context.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
-            var user = await userRepository.GetUserByIdAsync(userId);
+            var unitOfWork = context.HttpContext.RequestServices.GetRequiredService<IUnitOfWork>();
+            var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
 
             if (user != null)
             {
                 user.LastActive = DateTime.UtcNow;
-                await userRepository.SaveAllAsync();
+                await unitOfWork.CompleteAsync();
             }
         }
     }

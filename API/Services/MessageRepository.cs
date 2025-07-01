@@ -45,23 +45,21 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
         string currentUsername,
         string recipientUsername)
     {
-        var messages = await context.Messages
+        var query = context.Messages
             .Where(x =>
                 x.Recipient.UserName == currentUsername && !x.RecipientDeleted && x.Sender.UserName == recipientUsername ||
                 x.Sender.UserName == currentUsername && !x.SenderDeleted && x.Recipient.UserName == recipientUsername)
-            .OrderBy(x => x.MessageSent)
+            .OrderBy(x => x.MessageSent);
+
+        var count = await query
+            .Where(x => x.Recipient.UserName == currentUsername && x.DateRead == null)
+            .ExecuteUpdateAsync(x => x.SetProperty(m => m.DateRead, m => DateTime.UtcNow));
+
+        Console.WriteLine($"--> Number of messages marked as read: {count}");
+
+        var messages = await query
             .ProjectTo<MessageDto>(mapper.ConfigurationProvider)
             .ToListAsync();
-
-        var unreadMessages = messages
-            .Where(x => x.RecipientUsername == currentUsername && x.DateRead == null)
-            .ToList();
-
-        if (unreadMessages.Count > 0)
-        {
-            unreadMessages.ForEach(x => x.DateRead = DateTime.UtcNow);
-            await SaveAllAsync();
-        }
 
         return messages;
     }
