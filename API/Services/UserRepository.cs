@@ -34,11 +34,6 @@ public class UserRepository(DataContext dataContext, IMapper mapper) : IUserRepo
     {
         dataContext.Entry(user).State = EntityState.Modified;
     }
-    
-    public async Task<bool> SaveAllAsync()
-    {
-        return await dataContext.SaveChangesAsync() > 0;
-    }
 
     public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams @params)
     {

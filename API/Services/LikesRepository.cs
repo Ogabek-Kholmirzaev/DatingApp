@@ -65,9 +65,4 @@ public class LikesRepository(DataContext context, IMapper mapper) : ILikesReposi
     {
         await context.Likes.AddAsync(like);
     }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
 }

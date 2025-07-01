@@ -66,11 +66,6 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
         return messages;
     }
 
-    public async Task<bool> SaveAllAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
-
     public async Task AddGroupAsync(Group group)
     {
         await context.Groups.AddAsync(group);
