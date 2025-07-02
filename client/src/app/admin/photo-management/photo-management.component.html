@@ -2,12 +2,22 @@
     @for (photo of this.photos; track photo.id) {
     <div class="col-sm-2">
         <h4>{{photo.username}}</h4>
-        <img src="{{photo.url}}" class="img-thumbnail p-1" alt="{{photo.username}}">
+        <img
+            src="{{photo.url}}"
+            class="img-thumbnail p-1"
+            [class.not-approved]="!photo.isApproved"
+            alt="{{photo.username}}"
+        >
+        @if (!photo.isApproved) {
+            <div class="text-danger img-text">
+                <span class="text-danger">Awaiting approval</span>
+            </div>
+        }
         <div class="text-center">
-            <button class="btn btn-sm btn-success me-1" (click)="approvePhoto(photo.id)">
+            <button class="btn btn-sm btn-success me-1" (click)="this.approvePhoto(photo.id)">
                 Approve
             </button>
-            <button class="btn btn-sm btn-danger" (click)="rejectPhoto(photo.id)">
+            <button class="btn btn-sm btn-danger" (click)="this.rejectPhoto(photo.id)">
                 Reject
             </button>
         </div>
