@@ -72,11 +72,17 @@ public class UserRepository(DataContext dataContext, IMapper mapper) : IUserRepo
         return pagedUsers;
     }
 
-    public async Task<MemberDto?> GetMemberAsync(string username)
+    public async Task<MemberDto?> GetMemberAsync(string username, bool isCurrentUser)
     {
-        return await dataContext.Users
+        var query = dataContext.Users
             .Where(x => x.NormalizedUserName == username.ToUpper())
-            .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync();
+            .ProjectTo<MemberDto>(mapper.ConfigurationProvider);
+
+        if (isCurrentUser)
+        {
+            query = query.IgnoreQueryFilters();
+        }
+
+        return await query.SingleOrDefaultAsync();
     }
 }

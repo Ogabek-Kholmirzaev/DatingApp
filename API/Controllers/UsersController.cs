@@ -30,7 +30,7 @@ public class UsersController(
     [HttpGet("{username}")]
     public async Task<ActionResult<MemberDto>> GetUser(string username)
     {
-        var user = await unitOfWork.UserRepository.GetMemberAsync(username);
+        var user = await unitOfWork.UserRepository.GetMemberAsync(username, User.GetUsername() == username);
         return user == null ? NotFound() : user;
     }
 
