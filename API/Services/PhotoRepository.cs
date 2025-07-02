@@ -8,14 +8,7 @@ namespace API.Services;
 
 public class PhotoRepository(DataContext context) : IPhotoRepository
 {
-    public async Task<Photo?> GetPhotoById(int id)
-    {
-        return await context.Photos
-            .IgnoreQueryFilters()
-            .SingleOrDefaultAsync(x => x.Id == id);
-    }
-
-    public async Task<IEnumerable<PhotoApprovalDto>> GetUnapprovedPhotos()
+    public async Task<IEnumerable<PhotoApprovalDto>> GetUnapprovedPhotosAsync()
     {
         return await context.Photos
             .IgnoreQueryFilters()
@@ -27,6 +20,13 @@ public class PhotoRepository(DataContext context) : IPhotoRepository
                 Url = u.Url,
                 IsApproved = u.IsApproved
             }).ToListAsync();
+    }
+
+    public async Task<Photo?> GetPhotoByIdAsync(int id)
+    {
+        return await context.Photos
+            .IgnoreQueryFilters()
+            .SingleOrDefaultAsync(x => x.Id == id);
     }
 
     public void RemovePhoto(Photo photo)

@@ -68,7 +68,7 @@ public class UserRepository(DataContext dataContext, IMapper mapper) : IUserRepo
             query.ProjectTo<MemberDto>(mapper.ConfigurationProvider),
             @params.PageNumber,
             @params.PageSize);
-        
+
         return pagedUsers;
     }
 
@@ -84,5 +84,13 @@ public class UserRepository(DataContext dataContext, IMapper mapper) : IUserRepo
         }
 
         return await query.SingleOrDefaultAsync();
+    }
+    
+    public async Task<AppUser?> GetUserByPhotoIdAsync(int photoId)
+    {
+        return await dataContext.Users
+            .Include(p => p.Photos)
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(p => p.Photos.Any(p => p.Id == photoId));
     }
 }
