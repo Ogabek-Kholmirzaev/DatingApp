@@ -27,6 +27,7 @@ builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<PresenceTracker>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
 
 var app = builder.Build();
 
