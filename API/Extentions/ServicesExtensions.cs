@@ -54,7 +54,7 @@ public static class ServicesExtensions
 
         services.AddDbContext<DataContext>(options =>
         {
-            options.UseSqlite(connectionString);
+            options.UseSqlServer(connectionString);
         });
 
         return services;
