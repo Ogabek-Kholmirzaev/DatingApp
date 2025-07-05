@@ -37,7 +37,7 @@ Hosted at: [http://tanishish.somee.com](http://tanishish.somee.com)
 
 1. **Clone the repository**
    ```sh
-   git clone <your-repo-url>
+   git clone https://github.com/Ogabek-Kholmirzaev/DatingApp.git
    cd DatingApp
    ```
 
